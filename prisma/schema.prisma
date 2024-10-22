@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Curso {
+  id             Int      @id @default(autoincrement())
+  nome           String
+  instrutor      String
+  dataCriacao    DateTime @default(now())
+  thumbnail      String
+  createdAt      DateTime @default(now())
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  nome           String
+  email          String   @unique
+  password       String
+  role           Role     @default(USER)
+  cpf            String   @unique
+  telefone       String
+  cep            String
+  endereco       Endereco?
+  dataInscricao  DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  cursoIds       Int[]    // Armazena IDs dos cursos em que o usuário está matriculado
+}
+
+model Endereco {
+  id        Int      @id @default(autoincrement())
+  rua       String
+  numero    String
+  complemento String?
+  bairro    String
+  cidade    String
+  estado    String
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  USER
+}
